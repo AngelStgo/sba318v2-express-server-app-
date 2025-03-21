@@ -2,31 +2,24 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Middleware Imports
+import logger from './middleware/logger.js';
+import customHeader from './middleware/customHeader.js';
+import errorHandler from './middleware/errorHandler.js';
+
+// Import Routes
+import userRouter from './routes/users.js';
+import productRouter from './routes/products.js';
+import orderRouter from './routes/orders.js';
 
 const app = express();
 const PORT = 5050;
 
-
-const logger = (req, res, next) => {
-    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-    next();
-};
-
-const customHeader = (req, res, next) => {
-    res.setHeader('X-Custom-Header', 'MiddlewareExample');
-    next();
-};
-
-// error handler
-const errorHandler = (err, req, res, next) => {
-    console.error(`Error: ${err.message}`);
-    res.status(err.status || 500).json({
-        error: {
-            message: err.message || 'Internal Server Error',
-            status: err.status || 500
-        }
-    });
-};
+// Convert file paths correctly for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Middleware
 app.use(bodyParser.json());
@@ -41,15 +34,10 @@ app.set('views', path.join(__dirname, 'views'));
 // Serve Static Files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Import Routes
-const userRoutes = require('./routes/users');
-const productRoutes = require('./routes/products');
-const orderRoutes = require('./routes/orders');
-
 // Use Routes
-app.use('/users', userRoutes);
-app.use('/products', productRoutes);
-app.use('/orders', orderRoutes);
+app.use('/users', userRouter);
+app.use('/products', productRouter);
+app.use('/orders', orderRouter);
 
 // Home Route (Renders View)
 app.get('/', (req, res) => {

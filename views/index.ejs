@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <header>
+        <h1>RESTful API Overview</h1>
+    </header>
+
+    <section>
+        <h2>Available Routes</h2>
+        <ul>
+            <li><strong>GET</strong> <a href="/users">/users</a> - View all users</li>
+            <li><strong>POST</strong> /users - Create a new user</li>
+            <li><strong>PATCH</strong> /users/:id - Update a user</li>
+            <li><strong>DELETE</strong> /users/:id - Remove a user</li>
+            <li><strong>GET</strong> <a href="/products">/products</a> - View all products</li>
+            <li><strong>PATCH</strong> /products/:id - Update a product</li>
+            <li><strong>GET</strong> <a href="/orders">/orders</a> - View all orders</li>
+            <li><strong>DELETE</strong> /orders/:id - Remove an order</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Create a New User</h2>
+        <form id="userForm">
+            <input type="text" id="name" placeholder="Name" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <button type="submit">Create User</button>
+        </form>
+        <p id="responseMessage"></p>
+    </section>
+
+    <script>
+        document.getElementById('userForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+
+            const response = await fetch('/users', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email })
+            });
+
+            const result = await response.json();
+            document.getElementById('responseMessage').textContent = result.message;
+        });
+    </script>
+</body>
+</html>
